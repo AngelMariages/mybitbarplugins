@@ -16,6 +16,9 @@ const (
 	currentPosition = "player position as real"
 	trackDuration   = "duration of current track as integer"
 	//--
+	fastSpeed="1s"
+	slowSpeed="15s"
+	//--
 	showTime      = true
 	showArtist    = false
 	showTitleMenu = false
@@ -35,11 +38,11 @@ func main() {
 	if len(os.Args) > 1 {
 		switch os.Args[1] {
 		case "slow":
-			exec.Command("mv", execDir+"/spotifygo.5s.go", execDir+"/spotifygo.15s.go").Run()
+			exec.Command("mv", execDir+"/spotifygo."+fastSpeed+".go", execDir+"/spotifygo."+slowSpeed+".go").Run()
 			tell("Bitbar", "quit")
 			exec.Command("open", "-a", "BitBar").Run()
 		case "fast":
-			exec.Command("mv", execDir+"/spotifygo.15s.go", execDir+"/spotifygo.5s.go").Run()
+			exec.Command("mv", execDir+"/spotifygo."+slowSpeed+".go", execDir+"/spotifygo."+fastSpeed+".go").Run()
 			tell("Bitbar", "quit")
 			exec.Command("open", "-a", "BitBar").Run()
 		case "open":
@@ -71,6 +74,7 @@ func main() {
 		if showTitleMenu {
 			fmt.Print(track + " - ")
 		}
+		fmt.Println(track)
 		fmt.Print(artist)
 		fmt.Print(" (Show Spotify)")
 		fmt.Println("|bash='" + os.Args[0] + "' param1=open terminal=false")
@@ -84,16 +88,16 @@ func main() {
 
 func toggleFastMode(active bool) {
 	if active && getUpdSpeed() != "fast" {
-		exec.Command(execDir+"/spotifygo.15s.go", "fast").Run()
+		exec.Command(execDir+"/spotifygo."+slowSpeed+".go", "fast").Run()
 	} else if !active && getUpdSpeed() != "slow" {
-		exec.Command(execDir+"/spotifygo.5s.go", "slow").Run()
+		exec.Command(execDir+"/spotifygo."+fastSpeed+".go", "slow").Run()
 	}
 }
 
 func getUpdSpeed() string {
 	speed := strings.Split(os.Args[0], ".")[1]
 
-	if speed == "5s" {
+	if speed == fastSpeed {
 		return "fast"
 	}
 
