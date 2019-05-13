@@ -30,7 +30,7 @@ const (
 	fastSpeed = "5s"
 	slowSpeed = "15s"
 	//--
-	showTime      = true
+	showTime      = false
 	showArtist    = false
 	showTitleMenu = false
 	fontSize      = "12"
@@ -60,6 +60,12 @@ func main() {
 			tell("Spotify", "activate")
 		}
 	} else {
+		if !isSpotifyRunning() {
+			fmt.Println("(E)\n---\nError: Spotify not running")
+
+			toggleFastMode(false)
+			return
+		}
 		track := tell("Spotify", currentTrack)
 		artist := tell("Spotify", currentArtist)
 		album := tell("Spotify", currentAlbum)
@@ -69,9 +75,9 @@ func main() {
 
 		if state == "playing" {
 			if showTime {
-				fmt.Print("(" + parseSeconds(int(pos)) + ") ")
+				fmt.Print("(" + parseSeconds(int(pos)) + ")")
 			}
-			fmt.Print(track)
+			fmt.Print(" " + track)
 			if showArtist {
 				fmt.Print(" - " + artist)
 			}
@@ -89,10 +95,10 @@ func main() {
 		}
 		fmt.Print(artist)
 		fmt.Println("|bash='" + os.Args[0] + "' param1=open terminal=false")
+		fmt.Println("---")
 		fmt.Print(album)
 		fmt.Println("|bash='" + os.Args[0] + "' param1=open terminal=false")
 
-		fmt.Println("---")
 		fmt.Println("| image=" + getTempImage(imageURL) + " bash='" + os.Args[0] + "' param1=open terminal=false")
 
 		if debug == true {
@@ -118,6 +124,12 @@ func getUpdSpeed() string {
 	}
 
 	return "slow"
+}
+
+func isSpotifyRunning() bool {
+	out := tell("System Events", "set Appli_Launch to exists (processes where name is \"Spotify\")")
+
+	return out == "true"
 }
 
 func getExecDir() string {
